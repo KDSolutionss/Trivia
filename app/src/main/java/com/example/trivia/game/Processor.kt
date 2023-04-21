@@ -9,7 +9,7 @@ class Processor {
     var question=""
     var answer=""
     var tryAnswer=""
-    var counter=1
+    private var counter=1
     var mixed=" "
     fun get_Cipher():String{
         return answer
@@ -25,7 +25,9 @@ class Processor {
         val a=answer.lowercase().trim(' ') == tryAnswer.lowercase().trim(' ')
         if (a)
         {score+=delta
-        counter=1}
+        counter=1
+        delta= 1.0
+        }
         return a
     }
     fun getHint():Pair<String,Int>
@@ -39,7 +41,7 @@ class Processor {
             {
                 delta=0.01
             }
-            Pair(answer.map { if (answer.indexOf(it)<=counter-1) it else "*" }
+            Pair(answer.map { if (answer.indexOf(it)<counter-1) it else "*" }
                 .toString()
                 .trim('[',']')
                 .replace(',',' '),1)
@@ -59,10 +61,15 @@ class Processor {
             {
                 delta=0.01
             }
+            counter+=2
             answer.toList().shuffled().joinToString(" ")
         } else {
             "Больше нельзя использовать подсказки"
         }
+    }
+    fun erase_counter()
+    {
+        counter=1
     }
 
 
