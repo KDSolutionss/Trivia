@@ -4,13 +4,13 @@ import androidx.compose.ui.text.toLowerCase
 import java.util.*
 
 class Processor {
-     var score=0.0
+    var score=0.0
     private var delta=1.0
     var question=""
     var answer=""
     var tryAnswer=""
     private var counter=1
-    var mixed=" "
+    var showable=" "
     fun get_Cipher():String{
         return answer
             .map {'*'}
@@ -32,6 +32,7 @@ class Processor {
     }
     fun getHint():Pair<String,Int>
     {
+
         return if (counter<4) {
             counter++
             if (delta>0.25) {
@@ -41,7 +42,11 @@ class Processor {
             {
                 delta=0.01
             }
-            Pair(answer.map { if (answer.indexOf(it)<counter-1) it else "*" }
+            showable=answer.map { if (answer.indexOf(it)<counter-1) it else "*" }
+                .toString()
+                .trim('[',']')
+                .replace(',',' ')
+            return Pair(answer.map { if (answer.indexOf(it)<counter-1) it else "*" }
                 .toString()
                 .trim('[',']')
                 .replace(',',' '),1)
@@ -51,7 +56,7 @@ class Processor {
         }
 
     }
-    fun get_mixed():String
+    fun get_mixed():Pair<String,Int>
     {
         return if (counter==1) {
             if (delta>0.5) {
@@ -62,9 +67,10 @@ class Processor {
                 delta=0.01
             }
             counter+=2
-            answer.toList().shuffled().joinToString(" ")
+            showable=answer.toList().shuffled().joinToString(" ")
+            Pair(answer.toList().shuffled().joinToString(" "),1)
         } else {
-            "Больше нельзя использовать подсказки"
+            Pair("Больше нельзя использовать подсказки",0)
         }
     }
     fun erase_counter()

@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Dao
 interface QDAO {
     @Query("SELECT * FROM questions ORDER BY RANDOM() LIMIT 1")
-    suspend fun getQuestion():QuestionEntity
+    fun getQuestion():LiveData<QuestionEntity>
     @Query("SELECT * FROM questions")
-    fun getQuestions(): Flow<List<QuestionEntity>>
+    fun getQuestions(): LiveData<List<QuestionEntity>>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBooks(books: List<QuestionEntity>)
+     fun insertBooks(books: List<QuestionEntity>)
 }
