@@ -13,17 +13,22 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ExitToApp
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,6 +84,7 @@ fun SignUpScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     val state by viewModel.loadingState.collectAsState()
+    var isPasswordVisible by remember { mutableStateOf(false) }
     val isFormValid = remember(email, password, confirmPassword) {
         email.isNotBlank() && password.isNotBlank() && confirmPassword == password
     }
@@ -97,14 +103,29 @@ fun SignUpScreen(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            trailingIcon = {
+                IconButton(
+                    onClick = { isPasswordVisible = !isPasswordVisible },
+                    content = {
+                        if (isPasswordVisible)
+                            Icon(imageVector = ImageVector.vectorResource
+                                (id = R.drawable.baseline_visibility_off_24), contentDescription = "Visibility")
+                        else
+                            Icon(imageVector = ImageVector.vectorResource
+                                (id = R.drawable.baseline_visibility_24), contentDescription = "Visibility")
+                    }
+                )
+            },
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
         )
 
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             label = { Text("Confirm password") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
         )
 
         Button(
@@ -153,7 +174,7 @@ fun TriviaApp(modifier: Modifier, vm: FireBaseViewModel, proc:Processor) {
             }
             composable(route = "sign up")
             {
-                SignUpScreen(viewModel = SignUpViewModel(),{ navController.navigate("main screen") },{navController.navigate("sign in")})
+                SignUpScreen(viewModel = SignUpViewModel(),{ navController.navigate("sign in") },{navController.navigate("sign in")})
             }
             composable(route="main screen")
             {
@@ -173,7 +194,7 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
 
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
-
+    var isPasswordVisible by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val state by viewModel.loadingState.collectAsState()
 
@@ -231,14 +252,28 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
 
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = PasswordVisualTransformation(),
+                        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         value = userPassword,
                         label = {
                             Text(text = "Password")
                         },
                         onValueChange = {
                             userPassword = it
-                        }
+                        },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { isPasswordVisible = !isPasswordVisible },
+                                content = {
+                                    if (isPasswordVisible)
+                                    Icon(imageVector = ImageVector.vectorResource
+                                        (id = R.drawable.baseline_visibility_off_24), contentDescription = "Visibility")
+                                    else
+                                        Icon(imageVector = ImageVector.vectorResource
+                                            (id = R.drawable.baseline_visibility_24), contentDescription = "Visibility")
+                                }
+                            )
+                        },
+
                     )
 
                     Button(
@@ -278,6 +313,9 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
                         LoadingState.Status.SUCCESS -> {
                             Toast.makeText(LocalContext.current,"Success",Toast.LENGTH_LONG).show()
                             onNextButtonClicked()
+                        }
+                        LoadingState.Status.VERIFICATION_WAIT-> {
+                            Toast.makeText(LocalContext.current,"Please verify your email",Toast.LENGTH_LONG).show()
                         }
                         LoadingState.Status.FAILED -> {
                             Text(text = state.msg ?: "Error")

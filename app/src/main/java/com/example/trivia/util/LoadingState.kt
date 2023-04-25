@@ -5,6 +5,8 @@ data class LoadingState private constructor(val status: Status, val msg: String?
         val LOADED = LoadingState(Status.SUCCESS)
         val IDLE = LoadingState(Status.IDLE)
         val LOADING = LoadingState(Status.RUNNING)
+        val VW=LoadingState(Status.VERIFICATION_WAIT)
+        val VERIFIED=LoadingState(Status.VERIFIED)
         fun error(msg: String?) = LoadingState(Status.FAILED, msg)
     }
 
@@ -13,5 +15,7 @@ data class LoadingState private constructor(val status: Status, val msg: String?
         SUCCESS,
         FAILED,
         IDLE,
+        VERIFICATION_WAIT,
+        VERIFIED
     }
 }
