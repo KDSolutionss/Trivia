@@ -55,7 +55,6 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.7.0'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.compose.material:material:1.4.1'
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -92,6 +91,7 @@ dependencies {
 // build.gradle.kts
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+    implementation "androidx.compose.material3:material3:1.0.0-beta03"
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
