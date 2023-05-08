@@ -450,7 +450,7 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 56 .dp),
+                    .padding(top = 100 .dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 content = {
@@ -642,7 +642,7 @@ fun MyScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
+                .padding(100.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = processor.question,
