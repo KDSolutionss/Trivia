@@ -15,22 +15,25 @@ class TriviaViewModel {
             .getQuestions()
             .results
             .map {
-                val a=it.incorrect_answers.toMutableList()
+                val a=it.incorrect_answers.map { it.replace("&quot;","\"").replace("&#039;","\'") }.toMutableList()
                 a.add(it.correct_answer)
-                QuestionTrivia(it.question.replace("&quot;","\""),
-                    it.correct_answer.replace("&quot;","\""),
+                QuestionTrivia(it.question.replace("&quot;","\"").replace("&#039;","\'"),
+                    it.correct_answer.replace("&quot;","\"").replace("&#039;","\'"),
                     a
                 )}
     }
-    fun getNext():Pair<QuestionTrivia,Int>
+    suspend fun getNext():QuestionTrivia
     {
-        while (pointer<10)
-        {
+        return if (pointer<10) {
             pointer+=1
-            return Pair(_entityList.value!![pointer-1],pointer)
+            _entityList.value!![pointer-1]
+        } else {
+            pointer=1
+            ReloadEntity()
+            _entityList.value!![pointer-1]
 
         }
-        return Pair(_entityList.value!![pointer-1],pointer)
+
 
     }
 }

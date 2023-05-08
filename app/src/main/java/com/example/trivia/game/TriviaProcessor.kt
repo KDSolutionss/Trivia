@@ -1,28 +1,37 @@
 package com.example.trivia.game
 
 import com.example.trivia.database.QuestionTrivia
+import kotlin.random.Random
 
 class TriviaProcessor {
     private var successRow:Int=0
+    var score=0.0
     var data:QuestionTrivia?=null
     var answer=" "
+    var allVariants= mutableListOf<String>(" "," "," "," ")
     fun isRight(string: String):Boolean
     {
-        if (string==answer)
-        {
+        return if (string==answer) {
             successRow+=1
-            return true
-        }
-        else
-        {
+            score+1
+            true
+        } else {
             successRow=0
-            return false
+            false
         }
     }
-    fun getHint():String
+    fun getHint():Any
     {
+
         return if (successRow>=3) {
-            answer.subSequence(0,2).toString()
+            var a=(0..3).random()
+            while (allVariants[a]==answer)
+            {
+                a=(0..3).random()
+            }
+            allVariants[a]=" "
+            successRow=0
+            return allVariants
         } else {
             "У вас нет необходимой серии побед для подсказки"
         }

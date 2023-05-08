@@ -6,7 +6,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 
 interface TriviaApiService {
-    @GET("api.php?amount=10&type=multiple")
+    @GET("api.php?amount=10&type=multiple&difficulty=easy")
    suspend fun getQuestions():TriviaJson
 }
 object TriviaApi {

@@ -84,8 +84,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor) {
 
+    var progress by remember { mutableStateOf(0.0f) }
     val baseColorF= remember {
         mutableStateOf(Color.Blue)
+    }
+    val varians= remember {
+        mutableStateOf(triviaProcessor.allVariants)
     }
     val baseColorS= remember {
         mutableStateOf(Color.Blue)
@@ -101,20 +105,34 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor) {
             listOf(" "," "," "," ")
         )
     ) }
+    val composableScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     LaunchedEffect(true)
     {
         tvm.ReloadEntity()
-        data.value=tvm.getNext().first
+        data.value=tvm.getNext()
         data.value.incorrectAnswers=data.value.incorrectAnswers.shuffled().shuffled()
         triviaProcessor.answer=data.value.answer
+        triviaProcessor.allVariants=data.value.incorrectAnswers.toMutableList()
+        varians.value=triviaProcessor.allVariants
     }
-    val composableScope = rememberCoroutineScope()
     composableScope.launch {
         val result=TriviaApi.retrofitService.getQuestions()
         print(result.results.map { it.question })
-
     }
-
+    suspend fun update()
+    {
+        data.value=tvm.getNext()
+        data.value.incorrectAnswers=data.value.incorrectAnswers.shuffled().shuffled()
+        triviaProcessor.answer=data.value.answer
+        triviaProcessor.allVariants=data.value.incorrectAnswers.toMutableList()
+        varians.value=triviaProcessor.allVariants
+        baseColorF.value=Color.Blue
+        baseColorS.value=Color.Blue
+        baseColorT.value=Color.Blue
+        baseColorFf.value=Color.Blue
+        progress = 0.0f
+    }
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -126,43 +144,84 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor) {
             fontSize = 24.sp,
             textAlign = TextAlign.Center
         )
+        Text(text = "Текущий счет ${triviaProcessor.score}",
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center)
         Row() {
             Column(modifier = Modifier
                 .weight(1f)
                 .padding(10.dp)) {
                 Button(
-                    onClick = { },
+                    onClick = { if (triviaProcessor.isRight(varians.value[0]))
+                    {
+                        baseColorF.value=Color.Green
+
+                    }else{baseColorF.value=Color.Red
+                        };scope.launch { delay(1000L);update() }},
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = baseColorF.value)
                 ) {
-                    Text(text = data.value.incorrectAnswers[0])
+                    Text(text = varians.value[0])
                 }
                 Button(
-                    onClick = {},
+                    onClick = { if (triviaProcessor.isRight(varians.value[1]))
+                    {
+                        baseColorS.value=Color.Green
+
+                    }else{baseColorS.value=Color.Red
+                    };scope.launch { delay(1000L);update() }},
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = baseColorS.value)
                 ) {
-                    Text(text = data.value.incorrectAnswers[1])
+                    Text(text = varians.value[1])
                 }
             }
             Column(modifier = Modifier
                 .weight(1f)
                 .padding(10.dp)) {
                 Button(
-                    onClick = {baseColorT.value=Color.Red},
+                    onClick = { if (triviaProcessor.isRight(varians.value[2]))
+                    {
+                        baseColorT.value=Color.Green
+
+                    }else{baseColorT.value=Color.Red
+                    };scope.launch { delay(1000L);update() }},
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = baseColorT.value)
                 ) {
-                    Text(text = data.value.incorrectAnswers[2])
+                    Text(text = varians.value[2])
                 }
                 Button(
-                    onClick = { },
+                    onClick = { if (triviaProcessor.isRight(varians.value[3]))
+                    {
+                        baseColorFf.value=Color.Green
+
+                    }else{baseColorFf.value=Color.Red
+                    };scope.launch { delay(1000L);update() }},
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = baseColorFf.value)
                 ) {
-                    Text(text = data.value.incorrectAnswers[3])
+                    Text(text = varians.value[3])
                 }
             }
+
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        LinearProgressIndicator(progress)
+        LaunchedEffect(Unit) {
+            while (true) {
+                delay(1000L)
+                progress += 0.01f
+                if (progress >= 1.0f) {
+                    progress = 0.0f
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { triviaProcessor.getHint() }) {
+            Text(text = "Get hint")
+            
         }
     }
 }

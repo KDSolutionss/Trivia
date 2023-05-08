@@ -18,22 +18,6 @@ class FireBaseViewModel:ViewModel() {
     val ref = FirebaseDatabase.getInstance().reference
     fun go()
     {
-
-//        var questRef = ref.child("questions/${Random.nextInt(3004)}")
-//        val valueEventListener: ValueEventListener = object : ValueEventListener {
-//
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                val a=dataSnapshot.getValue(QuestionFirebase::class.java)
-//
-//                _entity= MutableLiveData(dataSnapshot.getValue(QuestionFirebase::class.java))
-//
-//            }
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                Log.d("error", databaseError.message)
-//
-//            }
-//
-//        }
         ref.child("questions/${Random.nextInt(3004)}").addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
