@@ -87,6 +87,11 @@ dependencies {
     def nav_version = "2.5.3"
 
     implementation "androidx.navigation:navigation-compose:$nav_version"
+    // build.gradle
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+// build.gradle.kts
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 }

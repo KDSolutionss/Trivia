@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,13 +41,18 @@ import androidx.navigation.compose.rememberNavController
 import com.example.trivia.data.*
 import com.example.trivia.database.QuestionEntity
 import com.example.trivia.database.QuestionFirebase
+import com.example.trivia.database.QuestionTrivia
 import com.example.trivia.game.Processor
+import com.example.trivia.game.TriviaProcessor
 import com.example.trivia.ui.theme.TriviaTheme
 import com.example.trivia.util.LoadingState
+import com.example.trivia.util.TriviaApi
+import com.example.trivia.util.TriviaJson
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
@@ -59,6 +65,8 @@ class MainActivity : ComponentActivity() {
         viewModelFirebase.go()
 //        val viewModel = factory.let { ViewModelProvider(this, it)[MyViewModel::class.java] }
         val processor = Processor()
+        val tViewModel=TriviaViewModel()
+        val triviaProcessor=TriviaProcessor()
         setContent {
             TriviaTheme {
 
@@ -67,13 +75,97 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    TriviaApp(modifier = Modifier,viewModelFirebase,processor)
+                    TriviaApp(modifier = Modifier,viewModelFirebase,processor,tViewModel,triviaProcessor)
                 }
             }
         }
     }
 }
+@Composable
+fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor) {
 
+    val baseColorF= remember {
+        mutableStateOf(Color.Blue)
+    }
+    val baseColorS= remember {
+        mutableStateOf(Color.Blue)
+    }
+    var baseColorT= remember {
+        mutableStateOf(Color.Blue)
+    }
+    val baseColorFf= remember {
+        mutableStateOf(Color.Blue)
+    }
+    val data = remember { mutableStateOf<QuestionTrivia>(
+        QuestionTrivia("aboba", "aboba",
+            listOf(" "," "," "," ")
+        )
+    ) }
+    LaunchedEffect(true)
+    {
+        tvm.ReloadEntity()
+        data.value=tvm.getNext().first
+        data.value.incorrectAnswers=data.value.incorrectAnswers.shuffled().shuffled()
+        triviaProcessor.answer=data.value.answer
+    }
+    val composableScope = rememberCoroutineScope()
+    composableScope.launch {
+        val result=TriviaApi.retrofitService.getQuestions()
+        print(result.results.map { it.question })
+
+    }
+
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = data.value.question,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center
+        )
+        Row() {
+            Column(modifier = Modifier
+                .weight(1f)
+                .padding(10.dp)) {
+                Button(
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = baseColorF.value)
+                ) {
+                    Text(text = data.value.incorrectAnswers[0])
+                }
+                Button(
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = baseColorS.value)
+                ) {
+                    Text(text = data.value.incorrectAnswers[1])
+                }
+            }
+            Column(modifier = Modifier
+                .weight(1f)
+                .padding(10.dp)) {
+                Button(
+                    onClick = {baseColorT.value=Color.Red},
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = baseColorT.value)
+                ) {
+                    Text(text = data.value.incorrectAnswers[2])
+                }
+                Button(
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = baseColorFf.value)
+                ) {
+                    Text(text = data.value.incorrectAnswers[3])
+                }
+            }
+        }
+    }
+}
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel,
@@ -160,12 +252,12 @@ fun SignUpScreen(
 }
 
 @Composable
-fun TriviaApp(modifier: Modifier, vm: FireBaseViewModel, proc:Processor) {
+fun TriviaApp(modifier: Modifier, vm: FireBaseViewModel, proc:Processor,tvm: TriviaViewModel,triviaProcessor: TriviaProcessor) {
     val navController = rememberNavController()
     Scaffold { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "sign in",
+            startDestination = "milly",
             modifier = modifier.padding(innerPadding)
         ) {
             composable(route = "sign in")
@@ -184,6 +276,14 @@ fun TriviaApp(modifier: Modifier, vm: FireBaseViewModel, proc:Processor) {
             {
                 MyScreen(vm = vm, processor = proc ) { navController.navigate("signUp") }
             }
+            composable(route="milly")
+            {
+                MillionaireLayout(tvm,triviaProcessor)
+            }
+//            composable(route="trivia")
+//            {
+//                TestMoshi()
+//            }
         }
     }
 }
@@ -365,7 +465,11 @@ fun Greeting(modifier: Modifier = Modifier,onNextButtonClicked: () -> Unit) {
     }
 
 }
-
+@Composable
+fun TestMoshi()
+{
+    //TODO//
+}
 @Composable
 fun MyComposable(vm: MyViewModel) {
     val context = LocalContext.current
