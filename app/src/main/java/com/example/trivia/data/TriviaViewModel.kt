@@ -14,10 +14,10 @@ class TriviaViewModel {
             .getQuestions()
             .results
             .map {
-                val a=it.incorrect_answers.map { it.replace("&quot;","\"").replace("&#039;","\'") }.toMutableList()
+                val a=it.incorrect_answers.map { it.replace("&quot;","\"").replace("&#039;","\'").replace("&amp;","&") }.toMutableList()
                 a.add(it.correct_answer)
-                QuestionTrivia(it.question.replace("&quot;","\"").replace("&#039;","\'"),
-                    it.correct_answer.replace("&quot;","\"").replace("&#039;","\'"),
+                QuestionTrivia(it.question.replace("&quot;","\"").replace("&#039;","\'").replace("&amp;","&"),
+                    it.correct_answer.replace("&quot;","\"").replace("&#039;","\'").replace("&amp;","&"),
                     a
                 )}
     }

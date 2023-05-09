@@ -2,7 +2,6 @@ package com.example.trivia
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -20,7 +19,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -131,7 +129,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
     val baseColorF= remember {
         mutableStateOf(md_theme_dark_outline)
     }
-    val varians= remember {
+    val variants= remember {
         mutableStateOf(triviaProcessor.allVariants)
     }
     val baseColorS= remember {
@@ -144,7 +142,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
         mutableStateOf(md_theme_dark_outline)
     }
     val data = remember { mutableStateOf<QuestionTrivia>(
-        QuestionTrivia("aboba", "aboba",
+        QuestionTrivia(" ", " ",
             listOf(" "," "," "," ")
         )
     ) }
@@ -157,7 +155,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
         data.value.incorrectAnswers=data.value.incorrectAnswers.shuffled().shuffled()
         triviaProcessor.answer=data.value.answer
         triviaProcessor.allVariants=data.value.incorrectAnswers.toMutableList()
-        varians.value=triviaProcessor.allVariants
+        variants.value=triviaProcessor.allVariants
     }
     composableScope.launch {
         val result=TriviaApi.retrofitService.getQuestions()
@@ -169,7 +167,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
         data.value.incorrectAnswers=data.value.incorrectAnswers.shuffled().shuffled()
         triviaProcessor.answer=data.value.answer
         triviaProcessor.allVariants=data.value.incorrectAnswers.toMutableList()
-        varians.value=triviaProcessor.allVariants
+        variants.value=triviaProcessor.allVariants
         baseColorF.value= md_theme_dark_outline
         baseColorS.value=md_theme_dark_outline
         baseColorT.value=md_theme_dark_outline
@@ -184,7 +182,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
 
         Column(
             modifier = Modifier.padding(75 .dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -199,7 +197,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center
             )
-            Row() {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -207,7 +205,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                 ) {
                     Button(
                         onClick = {
-                            if (triviaProcessor.isRight(varians.value[0])) {
+                            if (triviaProcessor.isRight(variants.value[0])) {
                                 baseColorF.value = md_theme_dark_tertiary
 
                             } else {
@@ -217,11 +215,13 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = baseColorF.value)
                     ) {
-                        Text(text = varians.value[0])
+                        Box {
+                            Text(text = variants.value[0], modifier = Modifier.align(Alignment.Center))
+                        }
                     }
                     Button(
                         onClick = {
-                            if (triviaProcessor.isRight(varians.value[1])) {
+                            if (triviaProcessor.isRight(variants.value[1])) {
                                 baseColorS.value = md_theme_dark_tertiary
 
                             } else {
@@ -231,7 +231,9 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = baseColorS.value)
                     ) {
-                        Text(text = varians.value[1])
+                        Box {
+                            Text(text = variants.value[1], modifier = Modifier.align(Alignment.Center))
+                        }
                     }
                 }
                 Column(
@@ -241,7 +243,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                 ) {
                     Button(
                         onClick = {
-                            if (triviaProcessor.isRight(varians.value[2])) {
+                            if (triviaProcessor.isRight(variants.value[2])) {
                                 baseColorT.value = md_theme_dark_tertiary
 
                             } else {
@@ -251,11 +253,13 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = baseColorT.value)
                     ) {
-                        Text(text = varians.value[2])
+                        Box {
+                            Text(text = variants.value[2], modifier = Modifier.align(Alignment.Center))
+                        }
                     }
                     Button(
                         onClick = {
-                            if (triviaProcessor.isRight(varians.value[3])) {
+                            if (triviaProcessor.isRight(variants.value[3])) {
                                 baseColorFf.value = md_theme_dark_tertiary
 
                             } else {
@@ -265,7 +269,9 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = baseColorFf.value)
                     ) {
-                        Text(text = varians.value[3])
+                        Box {
+                            Text(text = variants.value[3], modifier = Modifier.align(Alignment.Center))
+                        }
                     }
                 }
 
