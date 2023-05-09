@@ -6,7 +6,6 @@ import com.example.trivia.util.TriviaApi
 
 class TriviaViewModel {
     var _entityList = MutableLiveData<List<QuestionTrivia>>()
-    lateinit var currentEntity:QuestionTrivia
     private var pointer=0
     suspend fun ReloadEntity()
     {

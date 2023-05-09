@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -39,6 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.compose.TriviaTheme
+import com.example.compose.md_theme_dark_onError
+import com.example.compose.md_theme_dark_outline
+import com.example.compose.md_theme_dark_tertiary
 import com.example.trivia.data.*
 import com.example.trivia.database.QuestionFirebase
 import com.example.trivia.database.QuestionTrivia
@@ -115,7 +120,7 @@ fun MyDialog(onDismiss: () -> Unit,descrition:String) {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text(text = "Все понял!", modifier = Modifier.fillMaxWidth())
+                Text(text = "Все понял!")
             }
         })
 }
@@ -178,7 +183,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
 
 
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(75 .dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -285,7 +290,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                 Text(
                     text = "Вы можете воспользоваться подсказкой, только если Вы угадали подряд 3 ответа.Прогресс - ${triviaProcessor.successRow}/3",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
+                    fontSize = 15.sp,
                     textAlign = TextAlign.Center
                 )
             }
@@ -310,7 +315,8 @@ fun SignUpScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
             value = email,
@@ -351,9 +357,10 @@ fun SignUpScreen(
         Button(
             onClick = { viewModel.signUp(email, password) },
             modifier = Modifier
-                .padding(16.dp)
+                .padding(top = 16.dp, bottom = 16 .dp)
                 .fillMaxWidth(),
-            enabled = isFormValid
+            enabled = isFormValid,
+            shape = RectangleShape
         ) {
             Text("Зарегистрироваться")
         }
@@ -450,7 +457,7 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 100 .dp),
+                    .padding(top = 100.dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 content = {
@@ -504,7 +511,8 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
                                 userEmail.trim(),
                                 userPassword.trim()
                             )
-                        }
+                        },
+                        shape = RectangleShape
                     )
                     Spacer(modifier = Modifier.height(18.dp))
                     TextButton(
@@ -592,16 +600,14 @@ fun MyComposable(vm: MyViewModel) {
         ready = isCreated
     }
     if (!ready) {
-        // Show a loading screen while the database is being created
+
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     } else {
-        // Show the data from the database
         val myDao = vm.db.QuestionsDAO()
         val data = myDao.getQuestion().value
 
-        // Use a LazyColumn to display the data
         if (data != null) {
             Text(text = data.answer)
         }
@@ -621,6 +627,7 @@ fun MyScreen(
     var progress by remember { mutableStateOf(0.0f) }
     var textFieldValue by remember { mutableStateOf("") }
     val pair = remember { mutableStateOf<QuestionFirebase>(QuestionFirebase("aboba", "aboba")) }
+    var isVisible= false
     LaunchedEffect(true)
     {
         vm.go()
@@ -642,23 +649,24 @@ fun MyScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(100.dp), horizontalAlignment = Alignment.CenterHorizontally
+                .padding(70.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = processor.question,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 8
             )
 
 
             Text(
                 text = if (text.value == "") processor.get_Cipher() else text.value,
-                fontSize = 24.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = "Текущий счет ${processor.score}",
-                fontSize = 24.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -671,6 +679,8 @@ fun MyScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
 
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            if (isVisible) Text(text="Неверный ответ",fontSize = 15.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
             LinearProgressIndicator(progress)
             LaunchedEffect(Unit) {
@@ -690,17 +700,20 @@ fun MyScreen(
             Button(onClick = { text.value = processor.get_mixed().first }) {
                 Text(text = "Перемешать ответ")
             }
-            Button(onClick = { update();progress = 0.0f;processor.erase_counter() }) {
+            Button(onClick = { update();progress = 0.0f;processor.erase_counter();isVisible=false }) {
                 Text(text = "Следующий вопрос")
             }
             Button(onClick = {
                 processor.tryAnswer = textFieldValue
                 if (processor.isAnswerRight()) {
                     update()
+                    isVisible=false
                     progress = 0.0f
                     text.value = processor.get_Cipher()
 
                 }
+                else
+                    isVisible=true
             }) {
                 Text(text = "Ответить")
             }
