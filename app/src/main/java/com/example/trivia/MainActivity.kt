@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
 //        val factory = ViewModelFactory(this.application)
-        val viewModelFirebase = FireBaseViewModel()
+        val viewModelFirebase = FireBaseDatabaseViewModel()
         viewModelFirebase.go()
 //        val viewModel = factory.let { ViewModelProvider(this, it)[MyViewModel::class.java] }
         val processor = Processor()
@@ -393,7 +393,7 @@ fun SignUpScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TriviaApp(modifier: Modifier, vm: FireBaseViewModel, proc:Processor,tvm: TriviaViewModel,triviaProcessor: TriviaProcessor) {
+fun TriviaApp(modifier: Modifier, vm: FireBaseDatabaseViewModel, proc:Processor, tvm: TriviaViewModel, triviaProcessor: TriviaProcessor) {
     val navController = rememberNavController()
     Scaffold { innerPadding ->
         NavHost(
@@ -600,7 +600,7 @@ fun TestMoshi()
 }
 @Composable
 fun MyComposable(vm: MyViewModel) {
-    val context = LocalContext.current
+//    val context = LocalContext.current
     var ready = false
     vm.getIsDatabaseCreated().observe(LocalLifecycleOwner.current) { isCreated ->
         ready = isCreated
@@ -611,7 +611,7 @@ fun MyComposable(vm: MyViewModel) {
             CircularProgressIndicator()
         }
     } else {
-        val myDao = vm.db.QuestionsDAO()
+        val myDao = vm.db.questionsDAO()
         val data = myDao.getQuestion().value
 
         if (data != null) {
@@ -625,8 +625,7 @@ fun MyComposable(vm: MyViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyScreen(
-    modifier: Modifier = Modifier, vm: FireBaseViewModel, processor: Processor,
+fun MyScreen(vm: FireBaseDatabaseViewModel, processor: Processor,
     onBackButtonClicked: () -> Unit) {
     val focusManager = LocalFocusManager.current
     val text = remember { mutableStateOf("") }
@@ -637,14 +636,14 @@ fun MyScreen(
     LaunchedEffect(true)
     {
         vm.go()
-        pair.value= vm._entity.value!!
+        pair.value= vm.entity.value!!
         processor.question = pair.value.question.toString()
         processor.answer = pair.value.answer.toString()
     }
 
     fun update() {
         vm.go()
-        pair.value= vm._entity.value!!
+        pair.value= vm.entity.value!!
         processor.answer = pair.value.answer.toString()
         processor.question = pair.value.question.toString()
         textFieldValue = " "
@@ -666,7 +665,7 @@ fun MyScreen(
 
 
             Text(
-                text = if (text.value == "") processor.get_Cipher() else text.value,
+                text = if (text.value == "") processor.getCipher() else text.value,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -703,10 +702,10 @@ fun MyScreen(
             Button(onClick = { text.value = processor.getHint().first }) {
                 Text(text = "Взять подсказку")
             }
-            Button(onClick = { text.value = processor.get_mixed().first }) {
+            Button(onClick = { text.value = processor.getMixed().first }) {
                 Text(text = "Перемешать ответ")
             }
-            Button(onClick = { update();progress = 0.0f;processor.erase_counter();isVisible=false }) {
+            Button(onClick = { update();progress = 0.0f;processor.erase_counter();isVisible=false;text.value = processor.getCipher() }) {
                 Text(text = "Следующий вопрос")
             }
             Button(onClick = {
@@ -715,7 +714,7 @@ fun MyScreen(
                     update()
                     isVisible=false
                     progress = 0.0f
-                    text.value = processor.get_Cipher()
+                    text.value = processor.getCipher()
 
                 }
                 else
@@ -733,7 +732,7 @@ fun MyScreen(
 @Composable
 fun DefaultPreview() {
 //        val factory = ViewModelFactory(this.application)
-    val viewModelFirebase = FireBaseViewModel()
+    val viewModelFirebase = FireBaseDatabaseViewModel()
     viewModelFirebase.go()
 //        val viewModel = factory.let { ViewModelProvider(this, it)[MyViewModel::class.java] }
     val processor = Processor()
