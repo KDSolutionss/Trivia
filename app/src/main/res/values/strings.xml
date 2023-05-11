@@ -5,4 +5,26 @@
     <string name="descriptionTrivia">В этом режиме Вам написать ответ на предложенный вопрос(регистр ответа не важен).
         Есть возможность воспользоваться подсказками - перемешать ответ,показать часть букв из ответа.
         Каждая подсказка понижает модификатор повышения баллов</string>
+    <string name="type_answer">Ответить</string>
+    <string name="next_question">Следующий вопрос</string>
+    <string name="mix_answer">Перемешать ответ</string>
+    <string name="get_hint">Взять подсказку</string>
+    <string name="wrong_answer">Неверный ответ</string>
+    <string name="write_answer">“Введите ответ”</string>
+    <string name="current_score">\"Текущий счет \"</string>
+    <string name="quiz">Викторина</string>
+    <string name="millionaire">Кто хочет стать миллионером?</string>
+    <string name="error">Error</string>
+    <string name="confirm_registration">Подтвердите регистрацию на почте</string>
+    <string name="have_not_account">Еще нет аккаунта?</string>
+    <string name="login">Войти</string>
+    <string name="password">Пароль</string>
+    <string name="email">Email</string>
+    <string name="login_top_bar">Вход</string>
+    <string name="already_have_account">Уже есть аккаунт? Перейдите к авторизации</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="confirm_password">Повторите пароль</string>
+    <string name="milly_hint">\"Вы можете воспользоваться подсказкой, только если Вы угадали подряд 3 ответа.Прогресс - \"</string>
+    <string name="dialog_confirm">Все понял!</string>
+    <string name="dialog_question">Как играть?</string>
 </resources>

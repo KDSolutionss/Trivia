@@ -59,20 +59,15 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
-//        val factory = ViewModelFactory(this.application)
         val viewModelFirebase = FireBaseDatabaseViewModel()
         viewModelFirebase.go()
-//        val viewModel = factory.let { ViewModelProvider(this, it)[MyViewModel::class.java] }
         val processor = Processor()
         val tViewModel=TriviaViewModel()
         val triviaProcessor=TriviaProcessor()
         setContent {
             TriviaTheme {
-
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -112,13 +107,13 @@ fun TopAppBarComposable(text:String,function:()->Unit,descrition: String)
 fun MyDialog(onDismiss: () -> Unit,descrition:String) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Как играть?") },
+        title = { Text(text = stringResource(R.string.dialog_question)) },
         text = { Text(text = descrition) },
         confirmButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text(text = "Все понял!")
+                Text(text = stringResource(R.string.dialog_confirm))
             }
         })
 }
@@ -175,7 +170,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
         progress = 0.0f
     }
     Scaffold(topBar = {
-        TopAppBarComposable(text = "\"Кто хочет стать миллионером?\"",goBackClicked, stringResource(
+        TopAppBarComposable(text = stringResource(id = R.string.millionaire),goBackClicked, stringResource(
             id = R.string.descriptionMilly
         )) }) {
 
@@ -192,7 +187,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "Текущий счет ${triviaProcessor.score}",
+                text = stringResource(id = R.string.current_score) + triviaProcessor.score,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center
@@ -290,11 +285,11 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = { triviaProcessor.getHint() }) {
-                    Text(text = "Взять подсказку")
+                    Text(text = stringResource(R.string.get_hint))
 
                 }
                 Text(
-                    text = "Вы можете воспользоваться подсказкой, только если Вы угадали подряд 3 ответа.Прогресс - ${triviaProcessor.successRow}/3",
+                    text = stringResource(R.string.milly_hint) + triviaProcessor.successRow + "/3",
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
                     textAlign = TextAlign.Center
@@ -327,14 +322,14 @@ fun SignUpScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(id = R.string.email)) },
             modifier = Modifier.padding(16.dp)
         )
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Пароль") },
+            label = { Text(stringResource(id = R.string.password)) },
             modifier = Modifier.padding(16.dp),
             trailingIcon = {
                 IconButton(
@@ -355,7 +350,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Повторите пароль") },
+            label = { Text(stringResource(R.string.confirm_password)) },
             modifier = Modifier.padding(16.dp),
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
         )
@@ -363,19 +358,19 @@ fun SignUpScreen(
         Button(
             onClick = { viewModel.signUp(email, password) },
             modifier = Modifier
-                .padding(top = 16.dp, bottom = 16 .dp)
+                .padding(top = 16.dp, bottom = 16.dp)
                 .fillMaxWidth(),
             enabled = isFormValid,
             shape = RectangleShape
         ) {
-            Text("Зарегистрироваться")
+            Text(stringResource(R.string.register))
         }
 
         TextButton(
             onClick = { signInClicked() },
             modifier = Modifier.padding(16.dp)
         ) {
-            Text("Уже есть аккаунт? Перейдите к авторизации")
+            Text(stringResource(R.string.already_have_account))
 
         }
     }
@@ -384,7 +379,7 @@ fun SignUpScreen(
             onNextButtonClicked()
         }
         LoadingState.Status.FAILED -> {
-            Toast.makeText(LocalContext.current,state.msg ?: "Возникла ошибка",Toast.LENGTH_LONG).show()
+            Toast.makeText(LocalContext.current,state.msg ?: stringResource(id = R.string.error),Toast.LENGTH_LONG).show()
         }
         else -> {}
     }
@@ -444,7 +439,7 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
             Column(modifier = Modifier.fillMaxWidth()) {
                 TopAppBar(
                     title = {
-                        Text(text = "Вход")
+                        Text(text = stringResource(R.string.login_top_bar))
                     },
                     navigationIcon = {
                         val activity = (LocalContext.current as? Activity)
@@ -471,7 +466,7 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
                         modifier = Modifier.fillMaxWidth(),
                         value = userEmail,
                         label = {
-                            Text(text = "Email")
+                            Text(text = stringResource(R.string.email))
                         },
                         onValueChange = {
                             userEmail = it
@@ -483,7 +478,7 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
                         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         value = userPassword,
                         label = {
-                            Text(text = "Пароль")
+                            Text(text = stringResource(R.string.password))
                         },
                         onValueChange = {
                             userPassword = it
@@ -510,7 +505,7 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
                             .height(50.dp),
                         enabled = userEmail.isNotEmpty() && userPassword.isNotEmpty(),
                         content = {
-                            Text(text = "Войти")
+                            Text(text = stringResource(R.string.login))
                         },
                         onClick = {
                             viewModel.signInWithEmailAndPassword(
@@ -525,7 +520,7 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
                         onClick = { signUPClicked() },
                         modifier = Modifier.padding(16.dp)
                     ) {
-                        Text("Еще нет аккаунта?")
+                        Text(stringResource(R.string.have_not_account))
 
                     }
 
@@ -536,10 +531,11 @@ fun LoginScreen(viewModel: AuthViewModel,onNextButtonClicked: () -> Unit,signUPC
                             onNextButtonClicked()
                         }
                         LoadingState.Status.VERIFICATION_WAIT-> {
-                            Toast.makeText(LocalContext.current,"Подтвердите регистрацию на почте",Toast.LENGTH_LONG).show()
+                            Toast.makeText(LocalContext.current,
+                                                            stringResource(R.string.confirm_registration),Toast.LENGTH_LONG).show()
                         }
                         LoadingState.Status.FAILED -> {
-                            Toast.makeText(LocalContext.current,state.msg ?: "Error",Toast.LENGTH_LONG).show()
+                            Toast.makeText(LocalContext.current,state.msg ?: stringResource(R.string.error),Toast.LENGTH_LONG).show()
                         }
                         else -> {}
                     }
@@ -563,7 +559,7 @@ fun Greeting(modifier: Modifier = Modifier, onMillyButtonClicked: () -> Unit, on
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "Викторина", fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.quiz), fontWeight = FontWeight.Bold)
         Image(
             painter = painterResource(id = R.drawable.clover_svgrepo_com),
             contentDescription = null,
@@ -578,14 +574,14 @@ fun Greeting(modifier: Modifier = Modifier, onMillyButtonClicked: () -> Unit, on
                     .padding(10.dp)
             )
             {
-                Text("Кто хочет стать миллионером?")
+                Text(stringResource(R.string.millionaire))
             }
             Button(
                 onClick = { onTriviaButtonClicked() }, modifier = modifier
                     .weight(1f)
                     .padding(10.dp)
             ) {
-                Text(text = "Викторина")
+                Text(text = stringResource(R.string.quiz))
 
             }
         }
@@ -631,7 +627,7 @@ fun MyScreen(vm: FireBaseDatabaseViewModel, processor: Processor,
     val text = remember { mutableStateOf("") }
     var progress by remember { mutableStateOf(0.0f) }
     var textFieldValue by remember { mutableStateOf("") }
-    val pair = remember { mutableStateOf<QuestionFirebase>(QuestionFirebase("aboba", "aboba")) }
+    val pair = remember { mutableStateOf<QuestionFirebase>(QuestionFirebase(" ", " ")) }
     var isVisible= false
     LaunchedEffect(true)
     {
@@ -648,7 +644,7 @@ fun MyScreen(vm: FireBaseDatabaseViewModel, processor: Processor,
         processor.question = pair.value.question.toString()
         textFieldValue = " "
     }
-    Scaffold(topBar = { TopAppBarComposable(text = "Викторина",onBackButtonClicked, stringResource(id = R.string.descriptionTrivia))}) {
+    Scaffold(topBar = { TopAppBarComposable(text = stringResource(R.string.quiz),onBackButtonClicked, stringResource(id = R.string.descriptionTrivia))}) {
 
 
         Column(
@@ -670,7 +666,7 @@ fun MyScreen(vm: FireBaseDatabaseViewModel, processor: Processor,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Текущий счет ${processor.score}",
+                text = stringResource(R.string.current_score) + processor.score,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -679,13 +675,13 @@ fun MyScreen(vm: FireBaseDatabaseViewModel, processor: Processor,
             TextField(
                 value = textFieldValue,
                 onValueChange = { textFieldValue = it },
-                label = { Text("“Введите ответ”") },
+                label = { Text(stringResource(R.string.write_answer)) },
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
 
             )
             Spacer(modifier = Modifier.height(16.dp))
-            if (isVisible) Text(text="Неверный ответ",fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            if (isVisible) Text(text= stringResource(R.string.wrong_answer),fontSize = 15.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
             LinearProgressIndicator(progress)
             LaunchedEffect(Unit) {
@@ -700,13 +696,13 @@ fun MyScreen(vm: FireBaseDatabaseViewModel, processor: Processor,
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { text.value = processor.getHint().first }) {
-                Text(text = "Взять подсказку")
+                Text(text = stringResource(R.string.get_hint))
             }
             Button(onClick = { text.value = processor.getMixed().first }) {
-                Text(text = "Перемешать ответ")
+                Text(text = stringResource(R.string.mix_answer))
             }
             Button(onClick = { update();progress = 0.0f;processor.erase_counter();isVisible=false;text.value = processor.getCipher() }) {
-                Text(text = "Следующий вопрос")
+                Text(text = stringResource(R.string.next_question))
             }
             Button(onClick = {
                 processor.tryAnswer = textFieldValue
@@ -720,7 +716,7 @@ fun MyScreen(vm: FireBaseDatabaseViewModel, processor: Processor,
                 else
                     isVisible=true
             }) {
-                Text(text = "Ответить")
+                Text(text = stringResource(R.string.type_answer))
             }
         }
     }
@@ -731,21 +727,6 @@ fun MyScreen(vm: FireBaseDatabaseViewModel, processor: Processor,
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-//        val factory = ViewModelFactory(this.application)
-    val viewModelFirebase = FireBaseDatabaseViewModel()
-    viewModelFirebase.go()
-//        val viewModel = factory.let { ViewModelProvider(this, it)[MyViewModel::class.java] }
-    val processor = Processor()
-    val tViewModel=TriviaViewModel()
-    val triviaProcessor=TriviaProcessor()
-        TriviaTheme {
 
-            // A surface container using the 'background' color from the theme
-            Surface(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                TriviaApp(modifier = Modifier,viewModelFirebase,processor,tViewModel,triviaProcessor)
-            }
-    }
 }
 
