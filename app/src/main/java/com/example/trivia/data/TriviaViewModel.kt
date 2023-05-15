@@ -13,18 +13,18 @@ class TriviaViewModel {
             .getQuestions()
             .results
             .map {
-                val a = it.incorrect_answers.map {
-                    it.replace("&quot;", "\"").replace("&#039;", "\'").replace("&amp;", "&")
-                }.toMutableList()
+                val a = it.incorrect_answers.map { result ->
+applyASCIIconvertation(result)                }.toMutableList()
                 a.add(it.correct_answer)
                 QuestionTrivia(
-                    it.question.replace("&quot;", "\"").replace("&#039;", "\'")
-                        .replace("&amp;", "&"),
-                    it.correct_answer.replace("&quot;", "\"").replace("&#039;", "\'")
-                        .replace("&amp;", "&"),
+                    applyASCIIconvertation(it.question)
+                    ,applyASCIIconvertation(it.correct_answer),
                     a
                 )
             }
+    }
+    fun applyASCIIconvertation(str:String):String{
+        return str.replace("&quot;", "\"").replace("&#039;", "\'").replace("&amp;", "&")
     }
 
     suspend fun getNext(): QuestionTrivia {
