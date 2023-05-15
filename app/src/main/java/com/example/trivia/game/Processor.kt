@@ -1,8 +1,5 @@
 package com.example.trivia.game
 
-import androidx.compose.ui.text.toLowerCase
-import java.util.*
-
 class Processor {
     var score=0.0
     private var delta=1.0
@@ -11,7 +8,7 @@ class Processor {
     var tryAnswer=""
     private var counter=1
     var showable=" "
-    fun get_Cipher():String{
+    fun getCipher():String{
         return answer
             .map {'*'}
             .toString()
@@ -56,7 +53,7 @@ class Processor {
         }
 
     }
-    fun get_mixed():Pair<String,Int>
+    fun getMixed():Pair<String,Int>
     {
         return if (counter==1) {
             if (delta>0.5) {

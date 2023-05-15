@@ -1,7 +1,6 @@
 package com.example.trivia.data
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.trivia.database.QuestionFirebase
@@ -10,12 +9,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 
-class FireBaseViewModel:ViewModel() {
-    var _entity = MutableLiveData<QuestionFirebase>()
-    val ref = FirebaseDatabase.getInstance().reference
+class FireBaseDatabaseViewModel:ViewModel() {
+    var entity = MutableLiveData<QuestionFirebase>()
+    private val ref = FirebaseDatabase.getInstance().reference
     fun go()
     {
         ref.child("questions/${Random.nextInt(3004)}").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -23,7 +21,7 @@ class FireBaseViewModel:ViewModel() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val a = dataSnapshot.getValue(QuestionFirebase::class.java)
 
-                _entity = MutableLiveData(a)
+                entity = MutableLiveData(a)
 
             }
 

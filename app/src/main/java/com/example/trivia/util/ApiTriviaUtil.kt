@@ -10,11 +10,12 @@ interface TriviaApiService {
    suspend fun getQuestions():TriviaJson
 }
 object TriviaApi {
+    private const val BASE_URL = "https://opentdb.com/"
     val retrofitService : TriviaApiService by lazy {
         Retrofit
             .Builder()
             .addConverterFactory(MoshiConverterFactory.create())
-            .baseUrl("https://opentdb.com/")
+            .baseUrl(BASE_URL)
             .build().create(TriviaApiService::class.java)
     }
 }

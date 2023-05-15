@@ -4,19 +4,21 @@ import com.example.trivia.database.QuestionTrivia
 import kotlin.random.Random
 
 class TriviaProcessor {
-    private var successRow:Int=0
+    var successRow:Int=0
     var score=0.0
     var data:QuestionTrivia?=null
     var answer=" "
-    var allVariants= mutableListOf<String>(" "," "," "," ")
+    var allVariants= mutableListOf(" "," "," "," ")
     fun isRight(string: String):Boolean
     {
         return if (string==answer) {
             successRow+=1
-            score+1
+            score+=1
             true
         } else {
             successRow=0
+            if (score>0) score -=0.5
+            else score=0.0
             false
         }
     }
