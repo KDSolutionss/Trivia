@@ -11,7 +11,7 @@
     <string name="get_hint">Взять подсказку</string>
     <string name="wrong_answer">Неверный ответ</string>
     <string name="write_answer">“Введите ответ”</string>
-    <string name="current_score">\"Текущий счет \"</string>
+    <string name="current_score">Текущий счет</string>
     <string name="quiz">Викторина</string>
     <string name="millionaire">Кто хочет стать миллионером?</string>
     <string name="error">Error</string>

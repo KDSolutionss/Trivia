@@ -187,7 +187,7 @@ fun MillionaireLayout(tvm:TriviaViewModel,triviaProcessor: TriviaProcessor,goBac
                 textAlign = TextAlign.Center
             )
             Text(
-                text = stringResource(id = R.string.current_score) + triviaProcessor.score,
+                text = stringResource(id = R.string.current_score)+" "+triviaProcessor.score,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center
