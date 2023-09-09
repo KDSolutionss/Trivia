@@ -2,14 +2,10 @@ package com.example.trivia.data
 
 
 import android.app.Application
-import androidx.compose.runtime.Stable
 import androidx.lifecycle.*
 import com.example.trivia.database.ItemRoomDatabase
 import com.example.trivia.database.QuestionEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class ViewModelFactory(private val app: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -22,12 +18,24 @@ class ViewModelFactory(private val app: Application) : ViewModelProvider.Factory
 }
 
 class MyViewModel(app: Application) : ViewModel() {
-    private val userDao = ItemRoomDatabase.getInstance(app).QuestionsDAO()
-    lateinit var quote:QuestionEntity
-    fun process()
-    {
+    var db = ItemRoomDatabase.getInstance(app)
+    private val userDao = db.questionsDAO()
+    lateinit var quote: QuestionEntity
+    private val isDatabaseCreated = MediatorLiveData<Boolean>()
+
+    init {
+        isDatabaseCreated.addSource(db.getDatabaseCreated()) { isCreated ->
+            isDatabaseCreated.value = isCreated
+        }
+    }
+
+    fun getIsDatabaseCreated(): LiveData<Boolean> {
+        return isDatabaseCreated
+    }
+
+    fun process() {
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
-            quote=userDao.getQuestion()
+            quote = userDao.getQuestion().value!!
         }
     }
 
